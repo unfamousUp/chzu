@@ -3,7 +3,7 @@
         <div class="main-header">
             <div class="input-wrapper">
                 <div class="input-box">
-                    <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
+                    <!-- <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
                         <el-form-item label="输入内容">
                             <template>
                                 <el-select v-model="value" filterable placeholder="请选择">
@@ -13,13 +13,17 @@
                                 </el-select>
                             </template>
                         </el-form-item>
-                    </el-form>
+                    </el-form> -->
+                    <el-input placeholder="请输入机构名称" v-model="orgName_input" style="width: 130px;">
+                    </el-input>
+                    <!-- <el-input placeholder="请输入内容" v-model="input" style="width: 130px;">
+                    </el-input> -->
                 </div>
                 <div class="main-header-seacher">
-                    <el-button type="primary" @click="getWaitToEventsInfo()">查询</el-button>
+                    <el-button style="margin-right: 20px;" type="primary" @click="getWaitToEventsInfoByOrgName()">查询</el-button>
                     <el-upload action="" accept=".xls,.xlsx" :show-file-list="false" :on-success="handleSuccess"
                         :before-upload="beforeUpload" :http-request="uploadExcel" :on-change="getFile">
-                        <el-button slot="trigger" size="small" type="primary">点击上传</el-button>
+                        <el-button slot="trigger" type="primary">点击更新数据</el-button>
                     </el-upload>
                 </div>
             </div>
@@ -118,7 +122,9 @@
                     'Access-Control-Allow-Origin': '*'
                 },
                 // 待办事件
-                toDoEventsList: []
+                toDoEventsList: [],
+                // 机构名称查询
+                orgName_input: ''
             };
         },
         mounted() {
@@ -135,7 +141,7 @@
                 const userId = this.$store.state.userInfo.userId
                 this.$axios.get(this.myHttp + '/events/getWaitToEventsInfo', {
                         params: {
-                            userId:userId
+                            userId: userId
                         }
                     })
                     .then(response => {
@@ -143,6 +149,27 @@
                         console.log("获取事件信息成功");
                         this.toDoEventsList = response.data.data;
                         console.log(this.toDoEventsList);
+                    })
+                    .catch(error => {
+                        // 处理请求错误
+                        console.error(error);
+                    });
+            },
+            getWaitToEventsInfoByOrgName(){
+                console.log(this.orgName_input);
+                const userId = this.$store.state.userInfo.userId
+                const orgName = this.orgName_input
+                this.$axios.get(this.myHttp + '/events/getWaitToEventsInfoByOrgName', {
+                        params: {
+                            userId: userId,
+                            orgName: orgName
+                        }
+                    })
+                    .then(response => {
+                        // 处理响应数据
+                        console.log("根据机构名称获取事件信息成功");
+                        this.toDoEventsList = response.data.data;
+                        // console.log(this.toDoEventsList);
                     })
                     .catch(error => {
                         // 处理请求错误
@@ -263,6 +290,10 @@
         display: flex;
     }
 
+    .input-wrapper .input-box{
+        padding-left: 20px;
+    }
+
     .main-header .main-header-input {
         display: flex;
     }
@@ -276,6 +307,7 @@
 
     .main-header-seacher {
         margin-left: 20px;
+        display: flex;
     }
 
     .main-main {
@@ -311,4 +343,6 @@
         right: 50px;
         top: -200px;
     }
+
+    
 </style>

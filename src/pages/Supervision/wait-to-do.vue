@@ -36,7 +36,7 @@
                         </div>
                         <div class="base-info-item">
                             联系负责人：
-                            <span>郝发婷</span>
+                            <span>{{userInfo.fullName}}</span>
                         </div>
                     </div>
                 </div>
@@ -118,7 +118,6 @@
                             <span>下一步办理人</span>
                         </div>
                         <div class="box-right">
-                            <!-- <span>郝发婷</span> -->
                             <template>
                                 <el-select v-model="value" clearable placeholder="请选择">
                                     <el-option v-for="item in rolesOption" :key="item.userId" :label="item.fullName"
@@ -160,7 +159,10 @@
         name: 'WaitToDo',
         data() {
             return {
-                webBaseInfo:{},
+                webBaseInfo:{
+                    
+                },
+                userInfo:{},
                 transaction: {
                     currentProcess: '',
                     next: '',
@@ -248,7 +250,11 @@
         },
 
         mounted() {
+            // 获取机构用户信息
             this.webBaseInfo = this.$store.state.waitToRow
+            // 根据orgId查询用户信息
+            this.getUserInfoByOrgId(this.webBaseInfo.assignedToOrganization);
+            console.log("webBaseInfo:");
             console.log(this.webBaseInfo);
             if(this.$store.state.userInfo.isAdmin) this.getUserOptionInfo(this.webBaseInfo.assignedToOrganization);
             if(this.$store.state.userInfo.isInstitution) this.getUserOptionInfo(1001);
@@ -267,6 +273,22 @@
                         // 处理响应数据
                         this.rolesOption = response.data.data;
                         console.log(roles);
+                    })
+                    .catch(error => {
+                        // 处理错误
+                    });
+            },
+            getUserInfoByOrgId(orgId) {
+                console.log("getUserInfoByOrgId:"+orgId);
+                this.$axios.get(this.myHttp + '/user/getUserInfoByOrgId',{
+                    params:{
+                        orgId:orgId
+                    }
+                })
+                    .then(response => {
+                        // 处理响应数据
+                        this.userInfo = response.data.data;
+                        console.log(userInfo);
                     })
                     .catch(error => {
                         // 处理错误
