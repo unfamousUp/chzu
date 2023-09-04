@@ -20,11 +20,59 @@
                     </el-input> -->
                 </div>
                 <div class="main-header-seacher">
-                    <el-button style="margin-right: 20px;" type="primary" @click="getWaitToEventsInfoByOrgName()">查询</el-button>
+                    <el-button style="margin-right: 20px;" type="primary" @click="getWaitToEventsInfoByOrgName()">查询
+                    </el-button>
                     <el-upload action="" accept=".xls,.xlsx" :show-file-list="false" :on-success="handleSuccess"
                         :before-upload="beforeUpload" :http-request="uploadExcel" :on-change="getFile">
                         <el-button slot="trigger" type="primary">点击更新数据</el-button>
                     </el-upload>
+                </div>
+                <div class="main-header-add">
+                    <el-button type="primary" @click="showAddDialog()">添加</el-button>
+                    <!-- 添加弹窗 -->
+                    <el-dialog title="添加事件信息" :visible.sync="addDialogVisible" width="40%" center @close="clearAddForm">
+                        <el-form :model="newRow" ref="addForm" label-width="80px" :rules="addFormRules">
+                            <el-form-item label="通报单位" prop="orgId">
+                                <el-select v-model="newRow.orgId" filterable placeholder="请选择通报单位">
+                                    <el-option v-for="org in selectOptions.orgInfo" :key="org.orgId"
+                                        :label="org.orgName" :value="org.orgId">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="紧急程度" prop="emergencyDegree">
+                                <el-select v-model="newRow.emergencyDegree" placeholder="请选择紧急程度">
+                                    <el-option v-for="emergencyDegree in selectOptions.emergencyDegree"
+                                        :key="emergencyDegree" :label="emergencyDegree" :value="emergencyDegree">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="发起单位" prop="origin_department">
+                                <el-select v-model="newRow.originDepartment" placeholder="请选择发起单位">
+                                    <el-option v-for="origin_department in selectOptions.origin_department"
+                                        :key="origin_department" :label="origin_department" :value="origin_department">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="数据来源" prop="datasource">
+                                <el-select v-model="newRow.datasource" placeholder="请选择数据来源">
+                                    <el-option v-for="datasource in selectOptions.datasource" :key="datasource"
+                                        :label="datasource" :value="datasource">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="违规内容" prop="illegalContent">
+                                <el-select v-model="newRow.illegalContent" placeholder="请选择违规内容">
+                                    <el-option v-for="illegalContent in selectOptions.illegalContent"
+                                        :key="illegalContent" :label="illegalContent" :value="illegalContent">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="addRow" type="primary">确认添加</el-button>
+                            <el-button @click="addDialogVisible = false">取消</el-button>
+                        </div>
+                    </el-dialog>
                 </div>
             </div>
         </div>
@@ -32,9 +80,9 @@
             <div class="institution-table">
                 <template>
                     <el-table ref="filterTable" :data="toDoEventsList" style="width: 100%">
-                        <el-table-column prop="eventId" label="编号" width="170">
+                        <el-table-column prop="eventId" label="编号" width="130">
                         </el-table-column>
-                        <el-table-column prop="emergencyDegree" label="紧急程度" width="170"
+                        <el-table-column prop="emergencyDegree" label="紧急程度" width="150"
                             :filters="[{ text: '紧急', value: '紧急' }, { text: '正常', value: '正常' }]"
                             :filter-method="filterTag" filter-placement="bottom-end">
                             <template slot-scope="scope">
@@ -44,23 +92,25 @@
                             </template>
                         </el-table-column>
                         <div v-if="this.$store.state.userInfo.username == 'wxb'">
-                            <el-table-column prop="eventStatus" label="事件状态" width="170">
+                            <el-table-column prop="eventStatus" label="事件状态" width="150">
                             </el-table-column>
                         </div>
                         <div v-else>
-                            <el-table-column prop="eventStatusInstitution" label="事件状态" width="170">
+                            <el-table-column prop="eventStatusInstitution" label="事件状态" width="150">
                             </el-table-column>
                         </div>
-                        <el-table-column prop="orgName" label="通报单位" width="190">
+                        <el-table-column prop="orgName" label="通报单位" width="200">
                         </el-table-column>
-                        <el-table-column prop="origin_department" label="发起单位" width="190">
+                        <el-table-column prop="orgType" label="单位类型" width="170">
+                        </el-table-column>
+                        <el-table-column prop="origin_department" label="发起单位" width="150">
                             网信办
                         </el-table-column>
-                        <el-table-column prop="datasource" label="数据来源" width="190">
+                        <el-table-column prop="datasource" label="数据来源" width="200">
                         </el-table-column>
                         <el-table-column prop="illegalContent" label="违规内容">
                         </el-table-column>
-                        <el-table-column prop="date" label="日期" sortable width="190" column-key="date"
+                        <el-table-column prop="date" label="日期" sortable width="150" column-key="date"
                             :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
                             :filter-method="filterHandler">
                             {{this.getNowDate()}}
@@ -124,7 +174,59 @@
                 // 待办事件
                 toDoEventsList: [],
                 // 机构名称查询
-                orgName_input: ''
+                orgName_input: '',
+                addDialogVisible: false,
+                newRow: {
+                    orgId: '',
+                    originDepartment: '',
+                    emergencyDegree: '',
+                    datasource: '',
+                    illegalContent: '',
+                },
+                addFormRules: {
+                    orgId: [{
+                        required: true,
+                        message: '通报单位不能为空',
+                        trigger: 'change'
+                    }, ],
+                    emergencyDegree: [{
+                        required: true,
+                        message: '事件紧急程度不能为空',
+                        trigger: 'blur'
+                    }, ],
+                    datasource: [{
+                        required: true,
+                        message: '数据来源不能为空',
+                        trigger: 'blur'
+                    }, ],
+                    originDepartment: [{
+                        required: true,
+                        message: '发起单位不能为空',
+                        trigger: 'blur'
+                    }, ],
+                    illegalContent: [{
+                        required: true,
+                        message: '违规内容不能为空',
+                        trigger: 'blur'
+                    }, ]
+                },
+                selectOptions: {
+                    emergencyDegree: [
+                        '正常',
+                        '紧急'
+                    ],
+                    orgInfo: [],
+                    datasource: [
+                        '互联网纠错系统'
+                    ],
+                    illegalContent: [
+                        '非法外链',
+                        '违规外链'
+                    ],
+                    origin_department: [
+                        '网信办'
+                    ]
+                }
             };
         },
         mounted() {
@@ -155,7 +257,7 @@
                         console.error(error);
                     });
             },
-            getWaitToEventsInfoByOrgName(){
+            getWaitToEventsInfoByOrgName() {
                 console.log(this.orgName_input);
                 const userId = this.$store.state.userInfo.userId
                 const orgName = this.orgName_input
@@ -188,6 +290,34 @@
                         const result = response.data;
                         this.$store.state.userInfo = result.data
                         console.log(result.data);
+                    })
+                    .catch(error => {
+                        // 处理请求错误
+                        console.error(error);
+                    });
+            },
+            getOrgInfo() {
+                this.$axios.get(this.myHttp + '/org/getOrgInfo')
+                    .then(response => {
+                        // 处理响应数据
+                        const orgInfo = response.data.data;
+                        this.selectOptions.orgInfo = orgInfo
+                        // this.$store.state.userInfo = result.data
+                        console.log("getOrgInfo():获取机构信息成功");
+                        console.log(orgInfo);
+                    })
+                    .catch(error => {
+                        // 处理请求错误
+                        console.error(error);
+                    });
+            },
+            addEventsInfo(){
+                this.$axios.post(this.myHttp + '/events/addEventsInfo', this.newRow)
+                    .then(response => {
+                        // 处理响应数据
+                        console.log("addEventsInfo:添加事件信息成功");
+                        const result = response.data.data;
+                        console.log(result);
                     })
                     .catch(error => {
                         // 处理请求错误
@@ -266,12 +396,60 @@
                 this.$router.push({
                     name: name
                 })
+            },
+            // 添加表格行数据
+            showAddDialog() {
+                this.getOrgInfo();
+                this.addDialogVisible = true;
+            },
+            addRow() {
+                // 验证表单
+                this.$refs.addForm.validate(valid => {
+                    if (valid) {
+                        // 表单验证通过，将新行数据添加到表格数据中
+                        this.tableData.push({
+                            ...this.newRow
+                        });
+                        console.log("newRow:");
+                        console.log(this.newRow);
+                        this.addEventsInfo()
+                        this.$message({
+                            message: '添加成功',
+                            type: 'success'
+                        });
+                        console.log(this.tableData);
+                        // 关闭弹窗
+                        this.addDialogVisible = false;
+                        // 清空表单
+                        this.clearAddForm();
+
+                    } else {
+                        // 表单验证失败，不执行添加操作
+                        return false;
+                    }
+                });
+            },
+            clearAddForm() {
+                this.newRow = {
+                    orgName: '',
+                    emergencyDegree: '',
+                    name: '',
+                    age: '',
+                    email: ''
+                }
+                this.$refs.addForm.clearValidate();
             }
         },
     };
 </script>
 
 <style scoped>
+    /* 自定义样式 */
+    .dialog-footer {
+        text-align: center;
+        padding: 10px 0;
+    }
+
     .waitTo-container {}
 
     .main-header {
@@ -287,10 +465,11 @@
     .main-header .input-wrapper {
         box-sizing: border-box;
         /* padding-top: 20px; */
+        position: relative;
         display: flex;
     }
 
-    .input-wrapper .input-box{
+    .input-wrapper .input-box {
         padding-left: 20px;
     }
 
@@ -303,6 +482,11 @@
         height: 50px;
         line-height: 45px;
         padding: 0 20px;
+    }
+
+    .main-header-add {
+        position: absolute;
+        right: 2.5%;
     }
 
     .main-header-seacher {
@@ -343,6 +527,4 @@
         right: 50px;
         top: -200px;
     }
-
-    
 </style>
