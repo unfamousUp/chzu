@@ -129,6 +129,24 @@
                     </div>
                     <div class="handle-box">
                         <div class="box-left">
+                            <span>附件</span>
+                        </div>
+                        <div class="box-right">
+                            <template>
+                                <!-- <el-input
+                                type="textarea"
+                                :autosize="{ minRows: 2, maxRows: 2}"
+                                placeholder="请输入内容"
+                                v-model="textarea">
+                              </el-input> -->
+                                <el-input type="textarea" placeholder="请输入内容" v-model="textarea" maxlength="100"
+                                    show-word-limit :autosize="{ minRows: 2, maxRows: 2}">
+                                </el-input>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="handle-box">
+                        <div class="box-left">
                             <span>操作</span>
                         </div>
                         <div class="box-right">
@@ -159,10 +177,11 @@
         name: 'WaitToDo',
         data() {
             return {
-                webBaseInfo:{
-                    
+                textarea: "",
+                webBaseInfo: {
+
                 },
-                userInfo:{},
+                userInfo: {},
                 transaction: {
                     currentProcess: '',
                     next: '',
@@ -174,7 +193,7 @@
                 fileList: [],
                 rolesOption: [],
                 value: '',
-                updateEventsInfoDTO:{
+                updateEventsInfoDTO: {
                     userId: null,
                     eventId: null,
                     eventType: null,
@@ -256,19 +275,19 @@
             this.getUserInfoByOrgId(this.webBaseInfo.assignedToOrganization);
             console.log("webBaseInfo:");
             console.log(this.webBaseInfo);
-            if(this.$store.state.userInfo.isAdmin) this.getUserOptionInfo(this.webBaseInfo.assignedToOrganization);
-            if(this.$store.state.userInfo.isInstitution) this.getUserOptionInfo(1001);
-            
+            if (this.$store.state.userInfo.isAdmin) this.getUserOptionInfo(this.webBaseInfo.assignedToOrganization);
+            if (this.$store.state.userInfo.isInstitution) this.getUserOptionInfo(1001);
+
         },
 
         methods: {
             getUserOptionInfo(orgId) {
-                console.log("getUserOptionInfo:"+orgId);
-                this.$axios.get(this.myHttp + '/user/getUserOptionInfo/',{
-                    params:{
-                        orgId:orgId
-                    }
-                })
+                console.log("getUserOptionInfo:" + orgId);
+                this.$axios.get(this.myHttp + '/user/getUserOptionInfo/', {
+                        params: {
+                            orgId: orgId
+                        }
+                    })
                     .then(response => {
                         // 处理响应数据
                         this.rolesOption = response.data.data;
@@ -279,12 +298,12 @@
                     });
             },
             getUserInfoByOrgId(orgId) {
-                console.log("getUserInfoByOrgId:"+orgId);
-                this.$axios.get(this.myHttp + '/user/getUserInfoByOrgId',{
-                    params:{
-                        orgId:orgId
-                    }
-                })
+                console.log("getUserInfoByOrgId:" + orgId);
+                this.$axios.get(this.myHttp + '/user/getUserInfoByOrgId', {
+                        params: {
+                            orgId: orgId
+                        }
+                    })
                     .then(response => {
                         // 处理响应数据
                         this.userInfo = response.data.data;
@@ -338,19 +357,17 @@
                     type: 'warning'
                 }).then(() => {
                     // 操作
-                    if(this.value){
-                        console.log("userId:"+this.value);
+                    if (this.value) {
+                        console.log("userId:" + this.value);
+                        this.updateWaitToEventsInfo();
                         this.$message({
-                        type: 'success',
-                        message: '提交成功!'
-                    });
-                    this.updateWaitToEventsInfo()
-                    }
-                    else{
+                            type: 'success',
+                            message: '提交成功!'
+                        });
+                        this.toWaitTo()
+                    } else {
                         console.log("value值为空");
                     }
-
-            
                 }).catch(() => {
                     this.$message({
                         type: 'info',
@@ -358,15 +375,16 @@
                     });
                 });
             },
-            updateWaitToEventsInfo(){
+            updateWaitToEventsInfo() {
                 this.updateEventsInfoDTO.userId = this.value;
+                this.updateEventsInfoDTO.textarea = this.textarea
                 this.updateEventsInfoDTO.eventId = this.webBaseInfo.eventId
                 this.updateEventsInfoDTO.eventType = this.webBaseInfo.eventType
                 this.updateEventsInfoDTO.eventStatus = this.webBaseInfo.eventStatus
                 this.updateEventsInfoDTO.eventStatusInstitution = this.webBaseInfo.eventStatusInstitution
                 this.updateEventsInfoDTO.processStatus = this.webBaseInfo.processStatus
                 console.log(this.updateEventsInfoDTO);
-                this.$axios.put(this.myHttp + '/events/updateEventsInfo',this.updateEventsInfoDTO)
+                this.$axios.put(this.myHttp + '/events/updateEventsInfo', this.updateEventsInfoDTO)
                     .then(response => {
                         // 处理响应数据
                         console.log(response.data);
@@ -374,6 +392,12 @@
                     .catch(error => {
                         // 处理错误
                     });
+            },
+            toWaitTo() {
+                const name = "toWaitTo"
+                this.$router.push({
+                    name: name
+                })
             }
         },
     };
@@ -543,6 +567,22 @@
         width: 100%;
         border-bottom: 1px solid rgb(218, 218, 242);
         /* background-color: palegoldenrod; */
+    }
+
+    .handle-content .handle-box:nth-child(4){
+        height: 60px;
+    }
+
+    .handle-content .handle-box:nth-child(4) .box-right{
+        display: block;
+        line-height: 12px;
+        font-size: 12px;
+        /* line-height: normal; */
+        height: 60px;
+    }
+
+    .handle-content .handle-box:nth-child(4) .box-left{
+        height: 60px;
     }
 
     .box-left {

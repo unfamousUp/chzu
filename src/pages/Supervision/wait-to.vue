@@ -80,9 +80,9 @@
             <div class="institution-table">
                 <template>
                     <el-table ref="filterTable" :data="toDoEventsList" style="width: 100%">
-                        <el-table-column prop="eventId" label="编号" width="130">
+                        <el-table-column prop="eventId" label="编号" width="100">
                         </el-table-column>
-                        <el-table-column prop="emergencyDegree" label="紧急程度" width="150"
+                        <el-table-column prop="emergencyDegree" label="紧急程度" width="130"
                             :filters="[{ text: '紧急', value: '紧急' }, { text: '正常', value: '正常' }]"
                             :filter-method="filterTag" filter-placement="bottom-end">
                             <template slot-scope="scope">
@@ -92,21 +92,21 @@
                             </template>
                         </el-table-column>
                         <div v-if="this.$store.state.userInfo.username == 'wxb'">
-                            <el-table-column prop="eventStatus" label="事件状态" width="150">
+                            <el-table-column prop="eventStatus" label="事件状态" width="140">
                             </el-table-column>
                         </div>
                         <div v-else>
-                            <el-table-column prop="eventStatusInstitution" label="事件状态" width="150">
+                            <el-table-column prop="eventStatusInstitution" label="事件状态" width="140">
                             </el-table-column>
                         </div>
                         <el-table-column prop="orgName" label="通报单位" width="200">
                         </el-table-column>
                         <el-table-column prop="orgType" label="单位类型" width="170">
                         </el-table-column>
-                        <el-table-column prop="origin_department" label="发起单位" width="150">
+                        <el-table-column prop="origin_department" label="发起单位" width="140">
                             网信办
                         </el-table-column>
-                        <el-table-column prop="datasource" label="数据来源" width="200">
+                        <el-table-column prop="datasource" label="数据来源" width="170">
                         </el-table-column>
                         <el-table-column prop="illegalContent" label="违规内容">
                         </el-table-column>
@@ -114,6 +114,8 @@
                             :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
                             :filter-method="filterHandler">
                             {{this.getNowDate()}}
+                        </el-table-column>
+                        <el-table-column prop="processStatus" label="处理状态" width="120">
                         </el-table-column>
                         <el-table-column prop="name" label="操作" width="100" fixd="right">
                             <template slot-scope="scope">
@@ -187,7 +189,7 @@
                     orgId: [{
                         required: true,
                         message: '通报单位不能为空',
-                        trigger: 'change'
+                        trigger: 'blur'
                     }, ],
                     emergencyDegree: [{
                         required: true,
@@ -311,13 +313,19 @@
                         console.error(error);
                     });
             },
-            addEventsInfo(){
+            addEventsInfo() {
                 this.$axios.post(this.myHttp + '/events/addEventsInfo', this.newRow)
                     .then(response => {
                         // 处理响应数据
                         console.log("addEventsInfo:添加事件信息成功");
                         const result = response.data.data;
-                        console.log(result);
+                        if (result) {
+                            this.$message({
+                                message: '添加成功',
+                                type: 'success'
+                            });
+                            this.getWaitToEventsInfo()
+                        }
                     })
                     .catch(error => {
                         // 处理请求错误
@@ -412,12 +420,8 @@
                         });
                         console.log("newRow:");
                         console.log(this.newRow);
-                        this.addEventsInfo()
-                        this.$message({
-                            message: '添加成功',
-                            type: 'success'
-                        });
-                        console.log(this.tableData);
+                        this.addEventsInfo();
+                        // console.log(this.tableData);
                         // 关闭弹窗
                         this.addDialogVisible = false;
                         // 清空表单
@@ -440,6 +444,13 @@
                 this.$refs.addForm.clearValidate();
             }
         },
+        beforeRouteEnter(to, from, next) {
+            // 使用 beforeRouteEnter 钩子，在进入路由前执行逻辑
+            next(vm => {
+                // 调用组件内的方法来重新加载数据
+                vm.getWaitToEventsInfo();
+            });
+        }
     };
 </script>
 

@@ -15,9 +15,13 @@
                         </el-form-item>
                     </el-form>
                 </div>
-                <div class="main-header-seacher">
-                    <el-button type="primary">查询</el-button>
-                    <el-button type="primary">更新数据</el-button>
+                <div class="main-header-seacher">w
+                    <el-button style="margin-right: 20px;" type="primary" @click="getWaitToEventsInfoByOrgName()">查询
+                    </el-button>
+                    <el-upload action="" accept=".xls,.xlsx" :show-file-list="false" :on-success="handleSuccess"
+                        :before-upload="beforeUpload" :http-request="uploadExcel" :on-change="getFile">
+                        <el-button slot="trigger" type="primary">点击更新数据</el-button>
+                    </el-upload>
                 </div>
             </div>
         </div>
@@ -25,9 +29,9 @@
             <div class="institution-table">
                 <template>
                     <el-table ref="filterTable" :data="atToDoEventsList" style="width: 100%">
-                        <el-table-column prop="eventId" label="编号" width="170">
+                        <el-table-column prop="eventId" label="编号" width="100">
                         </el-table-column>
-                        <el-table-column prop="emergencyDegree" label="紧急程度" width="170"
+                        <el-table-column prop="emergencyDegree" label="紧急程度" width="130"
                             :filters="[{ text: '紧急', value: '紧急' }, { text: '正常', value: '正常' }]"
                             :filter-method="filterTag" filter-placement="bottom-end">
                             <template slot-scope="scope">
@@ -37,26 +41,30 @@
                             </template>
                         </el-table-column>
                         <div v-if="this.$store.state.userInfo.username == 'wxb'">
-                            <el-table-column prop="eventStatus" label="事件状态" width="170">
+                            <el-table-column prop="eventStatus" label="事件状态" width="140">
                             </el-table-column>
                         </div>
                         <div v-else>
-                            <el-table-column prop="eventStatusInstitution" label="事件状态" width="170">
+                            <el-table-column prop="eventStatusInstitution" label="事件状态" width="140">
                             </el-table-column>
                         </div>
-                        <el-table-column prop="orgName" label="通报单位" width="190">
+                        <el-table-column prop="orgName" label="通报单位" width="200">
                         </el-table-column>
-                        <el-table-column prop="origin_department" label="发起单位" width="190">
+                        <el-table-column prop="orgType" label="单位类型" width="170">
+                        </el-table-column>
+                        <el-table-column prop="origin_department" label="发起单位" width="140">
                             网信办
                         </el-table-column>
-                        <el-table-column prop="datasource" label="数据来源" width="190">
+                        <el-table-column prop="datasource" label="数据来源" width="170">
                         </el-table-column>
                         <el-table-column prop="illegalContent" label="违规内容">
                         </el-table-column>
-                        <el-table-column prop="date" label="日期" sortable width="190" column-key="date"
+                        <el-table-column prop="date" label="日期" sortable width="150" column-key="date"
                             :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
                             :filter-method="filterHandler">
                             {{this.getNowDate()}}
+                        </el-table-column>
+                        <el-table-column prop="processStatus" label="处理状态" width="120">
                         </el-table-column>
                         <el-table-column prop="name" label="操作" width="100" fixd="right">
                             <template slot-scope="scope">
@@ -118,7 +126,6 @@
             // 获取在办事件数据
             this.getAtToEventsInfo()
         },
-
         methods: {
             // 获取在办事件数据
             getAtToEventsInfo() {
@@ -218,6 +225,7 @@
 
     .main-header-seacher {
         margin-left: 20px;
+        display: flex;
     }
 
     .main-main {
