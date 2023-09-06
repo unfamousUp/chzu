@@ -6,7 +6,9 @@
                 <template>
                     <div class="text">
                         <el-breadcrumb separator-class="el-icon-arrow-right">
-                            <el-breadcrumb-item>网站违规内容督办</el-breadcrumb-item>
+                            <el-breadcrumb-item
+                                >网站违规内容督办</el-breadcrumb-item
+                            >
                         </el-breadcrumb>
                     </div>
                 </template>
@@ -24,11 +26,11 @@
                     <div class="base-info-content">
                         <div class="base-info-item">
                             单位名称：
-                            <span>{{webBaseInfo.orgName}}</span>
+                            <span>{{ webBaseInfo.orgName }}</span>
                         </div>
                         <div class="base-info-item">
                             网站域名：
-                            <span>{{webBaseInfo.orgDomainName}}</span>
+                            <span>{{ webBaseInfo.orgDomainName }}</span>
                         </div>
                         <div class="base-info-item">
                             网站备案号：
@@ -36,7 +38,7 @@
                         </div>
                         <div class="base-info-item">
                             联系负责人：
-                            <span>{{userInfo.fullName}}</span>
+                            <span>{{ userInfo.fullName }}</span>
                         </div>
                     </div>
                 </div>
@@ -49,28 +51,74 @@
                     <!-- 主要内容 -->
                     <div class="detail-info-content">
                         <template>
-                            <el-table :data="detailInfoData" style="width: 100%" height="250">
-                                <el-table-column prop="id" label="id" width="50">
+                            <el-table
+                                :data="detailInfoData"
+                                style="width: 100%"
+                                height="250"
+                            >
+                                <el-table-column
+                                    prop="id"
+                                    label="id"
+                                    width="50"
+                                >
                                 </el-table-column>
-                                <el-table-column prop="domain_name" label="域名" width="150">
+                                <el-table-column
+                                    prop="domain_name"
+                                    label="域名"
+                                    width="150"
+                                >
                                 </el-table-column>
-                                <el-table-column :show-overflow-tooltip="true" prop="title" label="文章标题" width="220">
+                                <el-table-column
+                                    :show-overflow-tooltip="true"
+                                    prop="title"
+                                    label="文章标题"
+                                    width="220"
+                                >
                                 </el-table-column>
-                                <el-table-column prop="sensitive_word" label="敏感词" width="220">
+                                <el-table-column
+                                    prop="sensitive_word"
+                                    label="敏感词"
+                                    width="220"
+                                >
                                 </el-table-column>
-                                <el-table-column prop="suggestion" label="修改建议" width="300">
+                                <el-table-column
+                                    prop="suggestion"
+                                    label="修改建议"
+                                    width="300"
+                                >
                                 </el-table-column>
-                                <el-table-column :show-overflow-tooltip="true" prop="location" label="所在片段" width="300">
+                                <el-table-column
+                                    :show-overflow-tooltip="true"
+                                    prop="location"
+                                    label="所在片段"
+                                    width="300"
+                                >
                                 </el-table-column>
-                                <el-table-column prop="original_link" label="原始链接" width="400">
+                                <el-table-column
+                                    prop="original_link"
+                                    label="原始链接"
+                                    width="400"
+                                >
                                     <template slot-scope="scope">
-                                        <a style="color:orange;"
-                                            :href="scope.row.original_link">{{scope.row.original_link}}</a>
+                                        <a
+                                            style="color: orange"
+                                            :href="scope.row.original_link"
+                                            >{{ scope.row.original_link }}</a
+                                        >
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="date" label="快照时间" width="220">
+                                <el-table-column
+                                    prop="date"
+                                    label="快照时间"
+                                    width="220"
+                                >
                                 </el-table-column>
-                                <el-table-column fixed="right" prop="state" label="修改状态" width="120">
+                                <el-table-column
+                                    fixed="right"
+                                    prop="state"
+                                    label="修改状态"
+                                    width="120"
+                                >
                                 </el-table-column>
                             </el-table>
                         </template>
@@ -82,14 +130,16 @@
                         <span>流程通报</span>
                     </div>
                     <div class="process-content">
-                        <el-steps :active="currentState" finish-status="success">
+                        <el-steps
+                            :active="currentState"
+                            finish-status="success"
+                        >
                             <el-step title="待办"></el-step>
                             <el-step title="在办"></el-step>
                             <el-step title="办结"></el-step>
                         </el-steps>
                     </div>
                 </div>
-
             </div>
         </div>
         <div class="footer">
@@ -109,8 +159,13 @@
                             <span>请选择下一步</span>
                         </div>
                         <div class="box-right">
-                            <span v-if="this.$store.state.userInfo.isAdmin">部门领导审核</span>
-                            <span v-if="this.$store.state.userInfo.isInstitution">网信办审核</span>
+                            <span v-if="this.$store.state.userInfo.isAdmin"
+                                >部门领导审核</span
+                            >
+                            <span
+                                v-if="this.$store.state.userInfo.isInstitution"
+                                >网信办审核</span
+                            >
                         </div>
                     </div>
                     <div class="handle-box">
@@ -119,9 +174,17 @@
                         </div>
                         <div class="box-right">
                             <template>
-                                <el-select v-model="value" clearable placeholder="请选择">
-                                    <el-option v-for="item in rolesOption" :key="item.userId" :label="item.fullName"
-                                        :value="item.userId">
+                                <el-select
+                                    v-model="value"
+                                    clearable
+                                    placeholder="请选择"
+                                >
+                                    <el-option
+                                        v-for="item in rolesOption"
+                                        :key="item.userId"
+                                        :label="item.fullName"
+                                        :value="item.userId"
+                                    >
                                     </el-option>
                                 </el-select>
                             </template>
@@ -139,8 +202,14 @@
                                 placeholder="请输入内容"
                                 v-model="textarea">
                               </el-input> -->
-                                <el-input type="textarea" placeholder="请输入内容" v-model="textarea" maxlength="100"
-                                    show-word-limit :autosize="{ minRows: 2, maxRows: 2}">
+                                <el-input
+                                    type="textarea"
+                                    placeholder="请输入内容"
+                                    v-model="textarea"
+                                    maxlength="100"
+                                    show-word-limit
+                                    :autosize="{ minRows: 2, maxRows: 2 }"
+                                >
                                 </el-input>
                             </template>
                         </div>
@@ -150,7 +219,7 @@
                             <span>操作</span>
                         </div>
                         <div class="box-right">
-                            <span style="margin-right: 10px;">
+                            <span style="margin-right: 10px">
                                 <el-button @click="open">提交</el-button>
                             </span>
                             <span>
@@ -159,9 +228,14 @@
                                     multiple :limit="3" :on-exceed="handleExceed" :file-list="fileList">
                                     <el-button size="small" type="primary">点击上传附件</el-button>
                                 </el-upload> -->
-                                <el-upload action="/api/upload" accept=".xls,.xlsx"
-                                    :on-success="handleExcelUploadSuccess">
-                                    <el-button size="small" type="primary">上传附件</el-button>
+                                <el-upload
+                                    action="/api/upload"
+                                    accept=".xls,.xlsx"
+                                    :on-success="handleExcelUploadSuccess"
+                                >
+                                    <el-button size="small" type="primary"
+                                        >上传附件</el-button
+                                    >
                                 </el-upload>
                             </span>
                         </div>
@@ -177,10 +251,8 @@
         name: 'WaitToDo',
         data() {
             return {
-                textarea: "",
-                webBaseInfo: {
-
-                },
+                textarea: '',
+                webBaseInfo: {},
                 userInfo: {},
                 transaction: {
                     currentProcess: '',
@@ -201,46 +273,58 @@
                     eventStatus: '',
                     processStatus: null,
                 },
-                detailInfoData: [{
+                detailInfoData: [
+                    {
                         id: '1',
                         domain_name: 'www.czkx.org.cn',
                         title: '市县科协领导深入基层宣讲十九大 滁州市科学技术协会',
                         sensitive_word: '新时代中国特色社会主义思想',
                         suggestion: '习近平新时代中国特色社会主义思想',
-                        location: '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
-                        original_link: 'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
+                        location:
+                            '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
+                        original_link:
+                            'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
                         date: '2022/8/10 19:07:46',
-                        state: '待修改'
-                    }, {
+                        state: '待修改',
+                    },
+                    {
                         id: '2',
                         domain_name: 'www.czkx.org.cn',
                         title: '市县科协领导深入基层宣讲十九大 滁州市科学技术协会',
                         sensitive_word: '新时代中国特色社会主义思想',
                         suggestion: '习近平新时代中国特色社会主义思想',
-                        location: '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
-                        original_link: 'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
+                        location:
+                            '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
+                        original_link:
+                            'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
                         date: '2022/8/10 19:07:46',
-                        state: '待修改'
-                    }, {
+                        state: '待修改',
+                    },
+                    {
                         id: '3',
                         domain_name: 'www.czkx.org.cn',
                         title: '市县科协领导深入基层宣讲十九大 滁州市科学技术协会',
                         sensitive_word: '新时代中国特色社会主义思想',
                         suggestion: '习近平新时代中国特色社会主义思想',
-                        location: '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
-                        original_link: 'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
+                        location:
+                            '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
+                        original_link:
+                            'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
                         date: '2022/8/10 19:07:46',
-                        state: '待修改'
-                    }, {
+                        state: '待修改',
+                    },
+                    {
                         id: '4',
                         domain_name: 'www.czkx.org.cn',
                         title: '市县科协领导深入基层宣讲十九大 滁州市科学技术协会',
                         sensitive_word: '新时代中国特色社会主义思想',
                         suggestion: '习近平新时代中国特色社会主义思想',
-                        location: '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
-                        original_link: 'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
+                        location:
+                            '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
+                        original_link:
+                            'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
                         date: '2022/8/10 19:07:46',
-                        state: '待修改'
+                        state: '待修改',
                     },
                     {
                         id: '5',
@@ -248,10 +332,12 @@
                         title: '市县科协领导深入基层宣讲十九大 滁州市科学技术协会',
                         sensitive_word: '新时代中国特色社会主义思想',
                         suggestion: '习近平新时代中国特色社会主义思想',
-                        location: '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
-                        original_link: 'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
+                        location:
+                            '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
+                        original_link:
+                            'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
                         date: '2022/8/10 19:07:46',
-                        state: '待修改'
+                        state: '待修改',
                     },
                     {
                         id: '6',
@@ -259,34 +345,38 @@
                         title: '市县科协领导深入基层宣讲十九大 滁州市科学技术协会',
                         sensitive_word: '新时代中国特色社会主义思想',
                         suggestion: '习近平新时代中国特色社会主义思想',
-                        location: '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
-                        original_link: 'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
+                        location:
+                            '特色社会主义进入新时代的重要论断,坚持以新时代中国特色社会主义思想为统领,牢牢把',
+                        original_link:
+                            'http://www.czkx.org.cn/xian/6/2018-05-17/3723.html',
                         date: '2022/8/10 19:07:46',
-                        state: '待修改'
-                    }
-                ]
+                        state: '待修改',
+                    },
+                ],
             };
         },
 
         mounted() {
             // 获取机构用户信息
-            this.webBaseInfo = this.$store.state.waitToRow
+            this.webBaseInfo = this.$store.state.waitToRow;
             // 根据orgId查询用户信息
             this.getUserInfoByOrgId(this.webBaseInfo.assignedToOrganization);
-            console.log("webBaseInfo:");
+            console.log('webBaseInfo:');
             console.log(this.webBaseInfo);
-            if (this.$store.state.userInfo.isAdmin) this.getUserOptionInfo(this.webBaseInfo.assignedToOrganization);
-            if (this.$store.state.userInfo.isInstitution) this.getUserOptionInfo(1001);
-
+            if (this.$store.state.userInfo.isAdmin)
+                this.getUserOptionInfo(this.webBaseInfo.assignedToOrganization);
+            if (this.$store.state.userInfo.isInstitution)
+                this.getUserOptionInfo(1001);
         },
 
         methods: {
             getUserOptionInfo(orgId) {
-                console.log("getUserOptionInfo:" + orgId);
-                this.$axios.get(this.myHttp + '/user/getUserOptionInfo/', {
+                console.log('getUserOptionInfo:' + orgId);
+                this.$axios
+                    .get(this.myHttp + '/user/getUserOptionInfo/', {
                         params: {
-                            orgId: orgId
-                        }
+                            orgId: orgId,
+                        },
                     })
                     .then(response => {
                         // 处理响应数据
@@ -298,11 +388,12 @@
                     });
             },
             getUserInfoByOrgId(orgId) {
-                console.log("getUserInfoByOrgId:" + orgId);
-                this.$axios.get(this.myHttp + '/user/getUserInfoByOrgId', {
+                console.log('getUserInfoByOrgId:' + orgId);
+                this.$axios
+                    .get(this.myHttp + '/user/getUserInfoByOrgId', {
                         params: {
-                            orgId: orgId
-                        }
+                            orgId: orgId,
+                        },
                     })
                     .then(response => {
                         // 处理响应数据
@@ -314,25 +405,25 @@
                     });
             },
             handleExcelUploadSuccess() {
-                console.log("upload");
+                console.log('upload');
             },
             handleClickA() {
-                const name = "toWaitTo"
+                const name = 'toWaitTo';
                 this.$router.push({
-                    name: name
-                })
+                    name: name,
+                });
             },
             handleClickB() {
-                const name = "toAtTo"
+                const name = 'toAtTo';
                 this.$router.push({
-                    name: name
-                })
+                    name: name,
+                });
             },
             handleClickC() {
-                const name = "toDoneTo"
+                const name = 'toDoneTo';
                 this.$router.push({
-                    name: name
-                })
+                    name: name,
+                });
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
@@ -342,63 +433,78 @@
             },
             handleExceed(files, fileList) {
                 this.$message.warning(
-                    `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+                    `当前限制选择 3 个文件，本次选择了 ${
+                        files.length
+                    } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+                );
             },
             beforeRemove(file, fileList) {
-                return this.$confirm(`确定移除 ${ file.name }？`);
+                return this.$confirm(`确定移除 ${file.name}？`);
             },
             handleSubmit() {
-                alert("1")
+                alert('1');
             },
             open() {
                 this.$confirm('请确认提交, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    // 操作
-                    if (this.value) {
-                        console.log("userId:" + this.value);
-                        this.updateWaitToEventsInfo();
+                    type: 'warning',
+                })
+                    .then(() => {
+                        // 操作
+                        if (this.value) {
+                            console.log('userId:' + this.value);
+                            this.updateWaitToEventsInfo();
+                            this.$message({
+                                type: 'success',
+                                message: '提交成功!',
+                            });
+                        } else {
+                            console.log('value值为空');
+                        }
+                    })
+                    .catch(() => {
                         this.$message({
-                            type: 'success',
-                            message: '提交成功!'
+                            type: 'info',
+                            message: '已取消',
                         });
-                        this.toWaitTo()
-                    } else {
-                        console.log("value值为空");
-                    }
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消'
                     });
-                });
             },
             updateWaitToEventsInfo() {
+                // this.$store.state.institutionTextarea = this.textarea;
+                // console.log('this.$store.state.institutionTextarea:');
+                // console.log(this.$store.state.institutionTextarea);
                 this.updateEventsInfoDTO.userId = this.value;
-                this.updateEventsInfoDTO.textarea = this.textarea
-                this.updateEventsInfoDTO.eventId = this.webBaseInfo.eventId
-                this.updateEventsInfoDTO.eventType = this.webBaseInfo.eventType
-                this.updateEventsInfoDTO.eventStatus = this.webBaseInfo.eventStatus
-                this.updateEventsInfoDTO.eventStatusInstitution = this.webBaseInfo.eventStatusInstitution
-                this.updateEventsInfoDTO.processStatus = this.webBaseInfo.processStatus
+                this.updateEventsInfoDTO.textarea = this.textarea;
+                this.updateEventsInfoDTO.eventId = this.webBaseInfo.eventId;
+                this.updateEventsInfoDTO.eventType = this.webBaseInfo.eventType;
+                this.updateEventsInfoDTO.eventStatus = this.webBaseInfo.eventStatus;
+                this.updateEventsInfoDTO.eventStatusInstitution =
+                    this.webBaseInfo.eventStatusInstitution;
+                this.updateEventsInfoDTO.processStatus =
+                    this.webBaseInfo.processStatus;
                 console.log(this.updateEventsInfoDTO);
-                this.$axios.put(this.myHttp + '/events/updateEventsInfo', this.updateEventsInfoDTO)
+                this.$axios
+                    .put(
+                        this.myHttp + '/events/updateEventsInfo',
+                        this.updateEventsInfoDTO
+                    )
                     .then(response => {
                         // 处理响应数据
+                        console.log('updateWaitToEventsInfo():response.data');
                         console.log(response.data);
+                        this.toWaitTo();
                     })
                     .catch(error => {
                         // 处理错误
                     });
             },
             toWaitTo() {
-                const name = "toWaitTo"
+                const name = 'toWaitTo';
                 this.$router.push({
-                    name: name
-                })
-            }
+                    name: name,
+                });
+            },
         },
     };
 </script>
@@ -569,11 +675,11 @@
         /* background-color: palegoldenrod; */
     }
 
-    .handle-content .handle-box:nth-child(4){
+    .handle-content .handle-box:nth-child(4) {
         height: 60px;
     }
 
-    .handle-content .handle-box:nth-child(4) .box-right{
+    .handle-content .handle-box:nth-child(4) .box-right {
         display: block;
         line-height: 12px;
         font-size: 12px;
@@ -581,7 +687,7 @@
         height: 60px;
     }
 
-    .handle-content .handle-box:nth-child(4) .box-left{
+    .handle-content .handle-box:nth-child(4) .box-left {
         height: 60px;
     }
 
