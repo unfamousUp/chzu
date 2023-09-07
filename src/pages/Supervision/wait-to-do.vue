@@ -196,12 +196,6 @@
                         </div>
                         <div class="box-right">
                             <template>
-                                <!-- <el-input
-                                type="textarea"
-                                :autosize="{ minRows: 2, maxRows: 2}"
-                                placeholder="请输入内容"
-                                v-model="textarea">
-                              </el-input> -->
                                 <el-input
                                     type="textarea"
                                     placeholder="请输入内容"
@@ -352,7 +346,7 @@
                         date: '2022/8/10 19:07:46',
                         state: '待修改',
                     },
-                ],
+                ]
             };
         },
 
@@ -367,8 +361,8 @@
                 this.getUserOptionInfo(this.webBaseInfo.assignedToOrganization);
             if (this.$store.state.userInfo.isInstitution)
                 this.getUserOptionInfo(1001);
+            this.getSuggestion()
         },
-
         methods: {
             getUserOptionInfo(orgId) {
                 console.log('getUserOptionInfo:' + orgId);
@@ -471,10 +465,15 @@
                     });
             },
             updateWaitToEventsInfo() {
+                if (this.value == 1) {
+                    this.updateEventsInfoDTO.userId =
+                        this.$store.state.userInfo.userId;
+                } else {
+                    this.updateEventsInfoDTO.userId = this.value;
+                }
                 // this.$store.state.institutionTextarea = this.textarea;
                 // console.log('this.$store.state.institutionTextarea:');
                 // console.log(this.$store.state.institutionTextarea);
-                this.updateEventsInfoDTO.userId = this.value;
                 this.updateEventsInfoDTO.textarea = this.textarea;
                 this.updateEventsInfoDTO.eventId = this.webBaseInfo.eventId;
                 this.updateEventsInfoDTO.eventType = this.webBaseInfo.eventType;
@@ -483,6 +482,7 @@
                     this.webBaseInfo.eventStatusInstitution;
                 this.updateEventsInfoDTO.processStatus =
                     this.webBaseInfo.processStatus;
+                console.log('this.updateEventsInfoDTO');
                 console.log(this.updateEventsInfoDTO);
                 this.$axios
                     .put(
@@ -494,6 +494,25 @@
                         console.log('updateWaitToEventsInfo():response.data');
                         console.log(response.data);
                         this.toWaitTo();
+                    })
+                    .catch(error => {
+                        // 处理错误
+                    });
+            },
+            getSuggestion(){
+                const userId = this.$store.state.userInfo.userId;
+                 this.$axios
+                    .get(this.myHttp + '/redis/getSuggestionByUserId', {
+                        params: {
+                            userId: userId
+                        },
+                    })
+                    .then(response => {
+                        // 处理响应数据
+                        const result = response.data.data;
+                        console.log("getSuggestion():response.data.data:");
+                        console.log(result);
+                        this.textarea = result;
                     })
                     .catch(error => {
                         // 处理错误

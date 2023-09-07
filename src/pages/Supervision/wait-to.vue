@@ -3,25 +3,12 @@
         <div class="main-header">
             <div class="input-wrapper">
                 <div class="input-box">
-                    <!-- <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-                        <el-form-item label="输入内容">
-                            <template>
-                                <el-select v-model="value" filterable placeholder="请选择">
-                                    <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                        :value="item.value">
-                                    </el-option>
-                                </el-select>
-                            </template>
-                        </el-form-item>
-                    </el-form> -->
                     <el-input
                         placeholder="请输入机构名称"
                         v-model="orgName_input"
                         style="width: 130px"
                     >
                     </el-input>
-                    <!-- <el-input placeholder="请输入内容" v-model="input" style="width: 130px;">
-                    </el-input> -->
                 </div>
                 <div class="main-header-seacher">
                     <el-button
@@ -147,9 +134,7 @@
                             <el-button @click="addRow" type="primary"
                                 >确认添加</el-button
                             >
-                            <el-button @click="addDialogVisible = false"
-                                >取消</el-button
-                            >
+                            <el-button @click="clearAddForm">取消</el-button>
                         </div>
                     </el-dialog>
                 </div>
@@ -270,7 +255,8 @@
                                 <el-button
                                     v-if="
                                         scope.row.processStatus == '待通告' ||
-                                        scope.row.processStatus == '待处理'
+                                        scope.row.processStatus == '待处理' ||
+                                        scope.row.processStatus == '修改中'
                                     "
                                     @click="toWaitToDo(scope.row)"
                                     type="primary"
@@ -295,35 +281,40 @@
                 center
                 @close="clearAddForm"
             >
+                <el-form
+                    :model="auditFormData"
+                    ref="auditForm"
+                    :rules="textareaRules"
+                >
+                    <el-form-item label="机构用户提交信息" prop="textarea">
+                        <el-input
+                            type="textarea"
+                            :rows="2"
+                            placeholder="请输入内容"
+                            v-model="auditFormData.textarea"
+                        ></el-input>
+                    </el-form-item>
+                    <el-form-item label="修改建议" prop="suggestion">
+                        <el-input
+                            type="textarea"
+                            placeholder="请输入内容"
+                            v-model="auditFormData.suggestion"
+                            maxlength="30"
+                            show-word-limit
+                        ></el-input>
+                    </el-form-item>
+                </el-form>
                 <div slot="footer" class="dialog-footer">
-                    <el-button type="primary">查看附件 </el-button>
-                    <div style="margin: 20px 0">机构用户提交信息</div>
-                    <el-input
-                        type="textarea"
-                        :rows="2"
-                        placeholder="请输入内容"
-                        v-model="textarea"
+                    <el-button type="primary" @click="viewAttachment"
+                        >查看附件</el-button
                     >
-                    </el-input>
-                    <div style="margin: 20px 0">修改建议</div>
-                    <el-input
-                        style="margin-bottom: 50px"
-                        type="textarea"
-                        placeholder="请输入内容"
-                        v-model="suggestion"
-                        maxlength="30"
-                        show-word-limit
-                    >
-                    </el-input>
-                    <el-button @click="addRow" type="primary"
+                    <el-button type="primary" @click="audit"
                         >审核通过</el-button
                     >
-                    <el-button @click="addRow" type="primary"
+                    <el-button type="primary" @click="rejectAudit"
                         >审核不通过</el-button
                     >
-                    <el-button @click="checkDialogVisible = false"
-                        >取消</el-button
-                    >
+                    <el-button @click="clearAuditForm">取消</el-button>
                 </div>
             </el-dialog>
         </div>
@@ -366,6 +357,10 @@
                 },
                 dialogVisible: false,
                 value: '',
+                auditFormData: {
+                    textarea: '',
+                    suggestion: '',
+                },
                 tableData: [],
                 // 单选框
                 options: [
@@ -441,14 +436,29 @@
                 },
                 textarea: '',
                 suggestion: '',
+                textareaRules: {
+                    textarea: [
+                        {
+                            required: true,
+                            message: '内容不能为空',
+                            trigger: 'blur',
+                        },
+                    ],
+                    suggestion: [
+                        {
+                            required: true,
+                            max: 30,
+                            message: '请输入修改建议~',
+                            trigger: 'blur',
+                        },
+                    ],
+                },
+                row: {},
             };
         },
         mounted() {
             // 获取待办事件数据
-            this.getWaitToEventsInfo();
-            this.textarea = this.$store.state.institutionTextarea;
-            console.log('textarea:');
-            console.log(this.textarea);
+            // this.getWaitToEventsInfo();
         },
         methods: {
             cjjtest() {},
@@ -552,7 +562,7 @@
             },
             getTextareaByUserId(row) {
                 const userId = row.processByUser;
-                console.log("getTextareaByUserId:userId");
+                console.log('getTextareaByUserId:userId');
                 console.log(userId);
                 this.$axios
                     .get(this.myHttp + '/redis/getTextareaByUserId', {
@@ -564,7 +574,7 @@
                         // 处理响应数据
                         console.log('getTextareaByUserId:获取用户文本内容成功');
                         console.log(response.data.data);
-                        this.textarea = response.data.data;
+                        this.auditFormData.textarea = response.data.data;
                         this.showCheckDialog();
                     })
                     .catch(error => {
@@ -647,6 +657,7 @@
                 });
             },
             check(row) {
+                this.row = row;
                 console.log('审核所在的row：');
                 console.log(row);
                 this.getTextareaByUserId(row);
@@ -689,7 +700,75 @@
                     age: '',
                     email: '',
                 };
+                this.$refs.addForm.resetFields();
+                this.addDialogVisible = false;
                 // this.$refs.addForm.clearValidate();
+            },
+            viewAttachment() {
+                // 查看附件的操作
+                // 在这里添加查看附件的逻辑
+            },
+            audit() {
+                console.log('audit().this.row:');
+                console.log(this.row);
+                this.$axios
+                    .put(this.myHttp + '/events/auditEventsInfo', this.row)
+                    .then(response => {
+                        // 处理响应数据
+                        console.log('audit():response.data');
+                        console.log(response.data);
+                        this.$message({
+                            message: '审核通过',
+                            type: 'success',
+                        });
+                        this.clearAuditForm();
+                        this.getWaitToEventsInfo();
+                        // this.toWaitTo();
+                    })
+                    .catch(error => {
+                        // 处理错误
+                    });
+            },
+            rejectAudit() {
+                // 验证表单
+                this.$refs.auditForm.validate(valid => {
+                    if (valid) {
+                        // 表单验证通过，将新行数据添加到表格数据中
+                        // console.log(this.tableData);
+                        this.row.suggestion = this.auditFormData.suggestion
+                        console.log('rejectAudit().this.row:');
+                        console.log(this.row);
+                        this.$axios
+                            .put(this.myHttp + '/events/rejectAuditEventsInfo', this.row)
+                            .then(response => {
+                                // 处理响应数据
+                                console.log('rejectAudit():response.data');
+                                console.log(response.data);
+                                this.$message({
+                                    message: '审核不通过',
+                                    type: 'warning',
+                                });
+                                this.clearAuditForm();
+                                this.getWaitToEventsInfo();
+                                // this.toWaitTo();
+                            })
+                            .catch(error => {
+                                // 处理错误
+                            });
+    
+                    } else {
+                        // 表单验证失败，不执行添加操作
+                        return false;
+                    }
+                });
+            },
+            clearAuditForm() {
+                // 清空表单数据
+                this.auditFormData.textarea = '';
+                this.auditFormData.suggestion = '';
+                this.$refs.auditForm.resetFields();
+                this.checkDialogVisible = false;
+                // this.$refs.auditForm.clearValidate();
             },
         },
         beforeRouteEnter(to, from, next) {
@@ -717,7 +796,7 @@
         overflow: hidden;
         box-sizing: border-box;
         /* padding: 10px 0 0 280px;
-                                                                                                                            height: 180px; */
+                                                                                                                                                                                height: 180px; */
         width: 100%;
         /* background-color: pink; */
         padding-top: 20px;
