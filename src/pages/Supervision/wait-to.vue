@@ -3,9 +3,28 @@
         <div class="main-header">
             <div class="input-wrapper">
                 <div class="input-box">
+                    <div class="text">机构名称：</div>
                     <el-input
                         placeholder="请输入机构名称"
-                        v-model="orgName_input"
+                        v-model="queryInput.orgName_input"
+                        style="width: 130px"
+                    >
+                    </el-input>
+                </div>
+                <div class="input-box">
+                    <div class="text">违规内容：</div>
+                    <el-input
+                        placeholder="请输入违规内容"
+                        v-model="queryInput.illegalContent_input"
+                        style="width: 130px"
+                    >
+                    </el-input>
+                </div>
+                <div class="input-box">
+                    <div class="text">处理状态：</div>
+                    <el-input
+                        placeholder="请输入处理状态:"
+                        v-model="queryInput.processStatus_input"
                         style="width: 130px"
                     >
                     </el-input>
@@ -14,7 +33,7 @@
                     <el-button
                         style="margin-right: 20px"
                         type="primary"
-                        @click="getWaitToEventsInfoByOrgName()"
+                        @click="getWaitToEventsInfoByDynamicQuery()"
                         >查询
                     </el-button>
                     <el-upload
@@ -224,10 +243,10 @@
                         <el-table-column prop="illegalContent" label="违规内容">
                         </el-table-column>
                         <el-table-column
-                            prop="date"
-                            label="日期"
+                            prop="createTime"
+                            label="创建日期"
                             sortable
-                            width="150"
+                            width="160"
                             column-key="date"
                             :filters="[
                                 { text: '2016-05-01', value: '2016-05-01' },
@@ -237,7 +256,6 @@
                             ]"
                             :filter-method="filterHandler"
                         >
-                            {{ this.getNowDate() }}
                         </el-table-column>
                         <el-table-column
                             prop="processStatus"
@@ -454,6 +472,11 @@
                     ],
                 },
                 row: {},
+                queryInput: {
+                    orgName_input: '',
+                    illegalContent_input: '',
+                    processStatus_input: '',
+                },
             };
         },
         mounted() {
@@ -483,21 +506,28 @@
                         console.error(error);
                     });
             },
-            getWaitToEventsInfoByOrgName() {
+            getWaitToEventsInfoByDynamicQuery() {
                 console.log(this.orgName_input);
                 const userId = this.$store.state.userInfo.userId;
-                const orgName = this.orgName_input;
+                const orgName = this.queryInput.orgName_input;
+                const illegalContent = this.queryInput.illegalContent_input;
+                const processStatus = this.queryInput.processStatus_input
                 this.$axios
-                    .get(this.myHttp + '/events/getWaitToEventsInfoByOrgName', {
-                        params: {
-                            userId: userId,
-                            orgName: orgName,
-                        },
-                    })
+                    .get(
+                        this.myHttp + '/events/getWaitToEventsInfoByDynamicQuery',
+                        {
+                            params: {
+                                userId: userId,
+                                orgName: orgName,
+                                illegalContent: illegalContent,
+                                processStatus: processStatus
+                            },
+                        }
+                    )
                     .then(response => {
                         // 处理响应数据
-                        console.log('根据机构名称获取事件信息成功');
-                        this.toDoEventsList = response.data.data;
+                        console.log('动态SQL查询获取事件信息成功');
+                        this.toDoEventsList = response.data.data;w
                         // console.log(this.toDoEventsList);
                     })
                     .catch(error => {
@@ -735,11 +765,14 @@
                     if (valid) {
                         // 表单验证通过，将新行数据添加到表格数据中
                         // console.log(this.tableData);
-                        this.row.suggestion = this.auditFormData.suggestion
+                        this.row.suggestion = this.auditFormData.suggestion;
                         console.log('rejectAudit().this.row:');
                         console.log(this.row);
                         this.$axios
-                            .put(this.myHttp + '/events/rejectAuditEventsInfo', this.row)
+                            .put(
+                                this.myHttp + '/events/rejectAuditEventsInfo',
+                                this.row
+                            )
                             .then(response => {
                                 // 处理响应数据
                                 console.log('rejectAudit():response.data');
@@ -755,7 +788,6 @@
                             .catch(error => {
                                 // 处理错误
                             });
-    
                     } else {
                         // 表单验证失败，不执行添加操作
                         return false;
@@ -796,7 +828,7 @@
         overflow: hidden;
         box-sizing: border-box;
         /* padding: 10px 0 0 280px;
-                                                                                                                                                                                height: 180px; */
+                                                                                                                                                                                            height: 180px; */
         width: 100%;
         /* background-color: pink; */
         padding-top: 20px;
@@ -811,6 +843,12 @@
 
     .input-wrapper .input-box {
         padding-left: 20px;
+    }
+
+    .input-box .text {
+        float: left;
+        line-height: 40px;
+        margin-right: 20px;
     }
 
     .main-header .main-header-input {
