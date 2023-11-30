@@ -32,8 +32,8 @@ new Vue({
     Vue.prototype.$bus = this, // 全局事件总线
       Vue.prototype.$echarts = echarts // echarts
     Vue.prototype.$axios = axios // axios
-    Vue.prototype.myHttp = 'http://localhost:8088' // 访问后端的接口的url
-    this.$axios.defaults.baseURL = 'http://localhost:8088'
+    Vue.prototype.myHttp = 'http://192.168.85.107:8080' // 访问后端的接口的url
+    this.$axios.defaults.baseURL = 'http://192.168.85.107:8080'
     console.log(this.$axios.defaults.baseURL);
     console.log(this.$axios.defaults.withCredentials);
   },
