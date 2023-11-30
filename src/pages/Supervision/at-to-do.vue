@@ -243,8 +243,7 @@
         },
 
         mounted() {
-            this.currentRow = this.$store.state.atToRow
-                                                              
+            this.currentRow = this.$store.state.atToRow                                        
             this.currentProcess = this.currentRow.process
             this.rowIndex = this.currentRow.unique_id
             this.currentState = this.currentRow.currentState

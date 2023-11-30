@@ -28,14 +28,14 @@ new Vue({
   router,
   render: h => h(App),
   beforeCreate() {
- 
-      Vue.prototype.$bus = this, // 全局事件总线
+
+    Vue.prototype.$bus = this, // 全局事件总线
       Vue.prototype.$echarts = echarts // echarts
-      Vue.prototype.$axios = axios // axios
-      Vue.prototype.myHttp = 'http://localhost:8088' // 访问后端的接口的url
-      this.$axios.defaults.baseURL = 'http://localhost:8088'
-      console.log(this.$axios.defaults.baseURL);
-      console.log(this.$axios.defaults.withCredentials);
+    Vue.prototype.$axios = axios // axios
+    Vue.prototype.myHttp = 'http://localhost:8088' // 访问后端的接口的url
+    this.$axios.defaults.baseURL = 'http://localhost:8088'
+    console.log(this.$axios.defaults.baseURL);
+    console.log(this.$axios.defaults.withCredentials);
   },
   mounted() {
     // console.log(this.$store.state);
